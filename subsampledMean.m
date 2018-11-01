@@ -4,7 +4,7 @@ nviews = numel(h.nX);
 nvids  = size(h.vr,2);
 nframes = zeros(nvids,1);
 for j = 1:nvids
-    nframes(j) = h.vr{1,j}.Duration * h.vr{1,j}.FrameRate;
+    nframes(j) = round(h.vr{1,j}.Duration * h.vr{1,j}.FrameRate); % round() for the rare occasions that product of .Duration and.FrameRate returns a non-integer
 end
 ntime = sum(nframes) / h.vr{1}.FrameRate;
 npix = [];
