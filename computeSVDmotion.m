@@ -14,21 +14,21 @@ for k = 1:nviews
     kmotion = h.avgmotion(tp(k) + [1:tpix(k)]);
     avgmotion(np(k) + [1:npix(k)]) = kmotion(h.wpix{k});
     
-    sroi{k} = find(h.ROIfile(2:end-2)==k) + 1;
+    sroi{k} = find(h.ROIfile(2:end-4)==k) + 1;
     
     if ~isempty(sroi{k}) || sum(h.wpix{k}(:)) > 0 
         wvids = cat(1, wvids, k);
     end
 end
 
-nt0 = 1000;
+nt0 = min(1000, min(nframes));
 ncomps = 500;
 ncompsSmall = ncomps;
 fprintf('computing SVDs across all movies\n');
-nsegs = floor(10000 / 200);
+nsegs = min(floor(50000 / nt0), floor(double(sum(nframes))/nt0));
 
-tf = linspace(0,ntime-((nt0+1)/h.vr{1}.FrameRate),nsegs);
-nframetimes = cumsum([0; nframes]) / h.vr{1}.FrameRate;
+tf = linspace(0,floor(double(sum(nframes)-(nt0))/h.vr{1}.FrameRate),nsegs);
+nframetimes = double(cumsum([0; nframes])) / h.vr{1}.FrameRate;
 
 % first ROI is main ROI (all cameras)
 ims{1} = zeros(sum(npix),ncomps,'single');
@@ -36,7 +36,7 @@ avgmot{1} = avgmotion(:);
 uMot{1} = [];
 
 % small motion SVD ROIs (excludes pupils and last ROI = running)
-zf = find(h.plotROIs(2:end-2)) + 1;
+zf = find(h.plotROIs(2:end-4)) + 1;
 for z = zf(:)'
     if h.plotROIs(z)
         k = h.ROIfile(z);
@@ -60,8 +60,12 @@ for j = 1:nsegs
     % which video is tc in
     ivid = find(tc<nframetimes(2:end) & tc>=nframetimes(1:end-1));
     tcv = tc - nframetimes(ivid);
-    if tcv > (nframes(ivid)-(nt0+1))/h.vr{1}.FrameRate
-        tcv = tcv - (nt0+1)/h.vr{1}.FrameRate;
+    if tcv > (nframes(ivid)-(nt0))/h.vr{1}.FrameRate
+		ivid = ivid+1;
+		tcv = 0;
+        if ivid > nvids
+			break;
+		end
     end
     
     for k = wvids'
@@ -89,7 +93,7 @@ for j = 1:nsegs
                 imot = gpuArray(imot);
             end
             [u s v] = svdecon(imot);
-            u       = gather(u);
+            u       = gather_try(u);
             uMot{z}    = cat(2, uMot{z}, u(:,1:min(200,size(u,2))));
         end
     end
@@ -107,7 +111,7 @@ for z = 1:numel(ims)
         ncompsz = ncomps;
     end
     [u s v]  = svdecon(uMot{z});
-    uMotMask{z} = gather(u(:,1:min(ncompsz,size(u,2))));
+    uMotMask{z} = gather_try(u(:,1:min(ncompsz,size(u,2))));
     uMotMask{z} = normc(uMotMask{z});
 end
 
