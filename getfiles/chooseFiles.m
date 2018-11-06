@@ -7,37 +7,55 @@ namef0       = {};
 figpos = get(0,'DefaultFigurePosition');
 figunits = get(0,'DefaultFigureUnits');
 set(0,'DefaultFigurePosition',[1000 500 500 150],'DefaultFigureUnits','pixels');
-wfs = MFquestdlg([.5,.5],'would you like to process all movies?',...
-    '','Yes','No','Cancel','Cancel');
-switch wfs
-    case 'Yes'
-        filename0 = filename;
-        folders0  = folders;
-        namef0    = namef;
-        
-    case 'No'
-        fstr = {};
-        for j = 1:numel(folders)
-            fstr{j} = [folders{j} '/' namef{j}];
-        end
-        [fs,didchoose] = listdlg('PromptString','which movies (ctrl for multiple)',...
-            'SelectionMode','multiple','ListSize',[300 400],'ListString',fstr);
-        if didchoose
-            ik = 1;
-            for j = fs
-                filename0{ik} = filename{j};
-                folders0{ik}  = folders{j};
-                namef0{ik}    = namef{j};
-                ik = ik+1;
-            end
-        else
-            msgbox('no selection - going to take all movies');
-        end
-    case 'Cancel'
-        filename=filename(:);
-        folders=folders(:);
-        namef=namef(:);
-        return;
+% wfs = MFquestdlg([.5,.5],'would you like to process all movies?',...
+%     '','Yes','No','Cancel','Cancel');
+% switch wfs
+%     case 'Yes'
+%         filename0 = filename;
+%         folders0  = folders;
+%         namef0    = namef;
+%
+%     case 'No'
+%         fstr = {};
+%         for j = 1:numel(folders)
+%             fstr{j} = [folders{j} '/' namef{j}];
+%         end
+%         [fs,didchoose] = listdlg('PromptString','which movies (ctrl for multiple)',...
+%             'SelectionMode','multiple','ListSize',[300 400],'ListString',fstr);
+%         if didchoose
+%             ik = 1;
+%             for j = fs
+%                 filename0{ik} = filename{j};
+%                 folders0{ik}  = folders{j};
+%                 namef0{ik}    = namef{j};
+%                 ik = ik+1;
+%             end
+%         else
+%             msgbox('no selection - going to take all movies');
+%         end
+%     case 'Cancel'
+%         filename=filename(:);
+%         folders=folders(:);
+%         namef=namef(:);
+%         return;
+% end
+
+fstr = {};
+for j = 1:numel(folders)
+    fstr{j} = [folders{j} '/' namef{j}];
+end
+[fs,didchoose] = listdlg('PromptString','which movies (ctrl for multiple)',...
+    'SelectionMode','multiple','ListSize',[300 400],'ListString',fstr);
+if didchoose
+    ik = 1;
+    for j = fs
+        filename0{ik} = filename{j};
+        folders0{ik}  = folders{j};
+        namef0{ik}    = namef{j};
+        ik = ik+1;
+    end
+else
+    msgbox('no selection - going to take all movies');
 end
 
 clear filename folders namef;
@@ -54,12 +72,12 @@ clear filename folders namef;
 % else
 %     isblk = 'No';
 % end
-% 
+%
 % if strcmp(isblk,'Yes')
 %     filename{1}=[];
 %     folders = [];
 %     namef = [];
-%     
+%
 %     iview = {};
 %     if strcmp(ismulti,'Yes')
 %         % group files by first 4 letters
@@ -81,8 +99,8 @@ clear filename folders namef;
 %                 end
 %             end
 %         end
-%     
-%         
+%
+%
 %     else
 %         for j = 1:length(filename0)
 %             filename{1,j} = filename0{j};
@@ -90,9 +108,9 @@ clear filename folders namef;
 %             namef{1,j}      = namef0{j};
 %         end
 %     end
-%     
-%     
-%     
+%
+%
+%
 %     % check that each view has the same number of movies
 %     for k = 1:size(filename,1)
 %         for j = 1:size(filename,2)
@@ -110,8 +128,8 @@ clear filename folders namef;
 %     namef = namef0(:);
 % end
 
-    filename = filename0(:);
-    folders = folders0(:);
-    namef = namef0(:);
+filename = filename0(:);
+folders = folders0(:);
+namef = namef0(:);
 
 set(0,'DefaultFigurePosition',figpos,'DefaultFigureUnits',figunits);
