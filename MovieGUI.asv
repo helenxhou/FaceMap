@@ -58,7 +58,8 @@ h.output = hObject;
 addpath(genpath('.')); % add all subdirectories here to path
 
 % default filepath for eye camera
-h.filepath = '/home/hxh2001/mnt/HH/CompleteRecording_Server/';
+h.filepath = 'C:\Users\Helen Hou\Desktop\HR13_R4_006_chew_LOCAL\';
+% h.filepath = '/home/hxh2001/mnt/HH/CompleteRecording_Server/';
 h.suffix   = {'.mj2','.mp4','.mkv','.avi','.mpeg','.mpg','.asf'}; % suffix of eye camera file!
 
 % use a GPU? default 1
@@ -93,12 +94,10 @@ h.ROIfile = zeros(8,1);
 h.plotROIs = false(8,1);
 h.indROI = [];
 for k = 1:length(h.plotROIs)
-    h.locROI{k} = [];   
+    h.locROI{k} = [];
+    if k == 2
+        h.locROI{k} = [370.967479674797	265.020325203252	44.7967479674797	35.9349593495934];
 end
-
-h.locROI{2} = [370.9675  265.0203   44.7967   35.9350];
-h.locROI{3} = [329.6423  239.8659   46.5935   48.5122];
-h.locROI{4} = [288.3171  247.0528   37.6098   41.3252];
 
 axes(h.axes1);
 set(gca,'xtick',[],'ytick',[]);
@@ -144,8 +143,9 @@ if folder_name ~= 0
         msgbox('ahh! no movie files found!');
     else
         
-        [filename,folders,namef] = chooseFiles(filename,folders,namef);
-
+%         [filename,folders,namef] = chooseFiles(filename,folders,namef);
+%         filename{1,j} = filename{1};
+%         folders{1,j} = folders{1};
         
         axes(h.axes1);
         cla;
